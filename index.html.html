@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subham Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: url('your-image.png') no-repeat center center fixed; /* Your background image */
+      background-size: cover; /* Ensure the image covers the entire page */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .calculator {
+      background: rgba(44, 62, 80, 0.8); /* Slight transparency for the calculator */
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 350px; /* Limiting the width for mobile */
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 20px;
+      font-size: 24px;
+      text-align: right;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background: #ecf0f1;
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 22px;
+      border: none;
+      border-radius: 10px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      user-select: none; /* Disable text selection on buttons */
+    }
+
+    button:hover {
+      background: #2980b9;
+      transform: scale(1.1);
+    }
+
+    .operator {
+      background: #e67e22;
+    }
+
+    .operator:hover {
+      background: #d35400;
+    }
+
+    .equal {
+      background: #2ecc71;
+    }
+
+    .equal:hover {
+      background: #27ae60;
+    }
+
+    .clear {
+      background: #e74c3c;
+    }
+
+    .clear:hover {
+      background: #c0392b;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 480px) {
+      .calculator {
+        width: 100%;
+        padding: 10px;
+        max-width: none;
+      }
+
+      input[type="text"] {
+        font-size: 20px;
+        padding: 18px;
+      }
+
+      button {
+        font-size: 20px;
+        padding: 18px;
+      }
+    }
+
+    /* Ensures larger buttons on very small screens */
+    @media (max-width: 320px) {
+      button {
+        font-size: 18px;
+        padding: 16px;
+      }
+
+      input[type="text"] {
+        font-size: 18px;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <input type="text" id="display" disabled value="Subham" /> <!-- Default display showing "Subham" -->
+    <div class="buttons">
+      <button onclick="clearDisplay()" class="clear">C</button>
+      <button onclick="appendValue('(')">(</button>
+      <button onclick="appendValue(')')">)</button>
+      <button onclick="appendValue('/')" class="operator">÷</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('*')" class="operator">×</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('-')" class="operator">−</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('+')" class="operator">+</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="calculate()" class="equal">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+
+    function appendValue(value) {
+      if (display.value === "Subham") { // Clear the default value "Subham" when the user starts typing
+        display.value = "";
+      }
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = "Subham"; // Reset the display to show "Subham"
+    }
+
+    function calculate() {
+      try {
+        display.value = eval(display.value);
+      } catch {
+        display.value = "Error";
+      }
+    }
+  </script>
+
+</body>
+</html>
