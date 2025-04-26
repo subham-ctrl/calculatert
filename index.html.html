@@ -1,182 +1,591 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Subham Calculator</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: url('your-image.png') no-repeat center center fixed; /* Your background image */
-      background-size: cover; /* Ensure the image covers the entire page */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: 'Arial', sans-serif;
-      padding: 10px;
-      overflow: hidden;
-    }
-
-    .calculator {
-      background: rgba(44, 62, 80, 0.8); /* Slight transparency for the calculator */
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 350px; /* Limiting the width for mobile */
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 20px;
-      font-size: 24px;
-      text-align: right;
-      border: none;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      background: #ecf0f1;
-      margin-bottom: 15px;
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    button {
-      padding: 20px;
-      font-size: 22px;
-      border: none;
-      border-radius: 10px;
-      background: #3498db;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      user-select: none; /* Disable text selection on buttons */
-    }
-
-    button:hover {
-      background: #2980b9;
-      transform: scale(1.1);
-    }
-
-    .operator {
-      background: #e67e22;
-    }
-
-    .operator:hover {
-      background: #d35400;
-    }
-
-    .equal {
-      background: #2ecc71;
-    }
-
-    .equal:hover {
-      background: #27ae60;
-    }
-
-    .clear {
-      background: #e74c3c;
-    }
-
-    .clear:hover {
-      background: #c0392b;
-    }
-
-    /* Mobile Responsiveness */
-    @media (max-width: 480px) {
-      .calculator {
-        width: 100%;
-        padding: 10px;
-        max-width: none;
-      }
-
-      input[type="text"] {
-        font-size: 20px;
-        padding: 18px;
-      }
-
-      button {
-        font-size: 20px;
-        padding: 18px;
-      }
-    }
-
-    /* Ensures larger buttons on very small screens */
-    @media (max-width: 320px) {
-      button {
-        font-size: 18px;
-        padding: 16px;
-      }
-
-      input[type="text"] {
-        font-size: 18px;
-        padding: 16px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Runner 3D - By Subham</title>
+    <style>
+        /* Reset & Fullscreen */
+        html, body { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; background: #000; font-family: 'Arial Black', Gadget, sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Overlays */
+        .fullscreen-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; opacity: 1; transition: opacity 0.6s ease-out; perspective: 800px; overflow: hidden; }
+        /* Intro Screen */
+        #introScreen { background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); cursor: pointer; }
+        #introText { color: #fff; font-size: 6vw; text-align: center; text-shadow: 2px 2px 8px rgba(255, 255, 150, 0.6); margin-bottom: 1vh; white-space: nowrap; position: relative; z-index: 2; opacity: 1; transition: opacity 0.5s ease-out, transform 0.1s ease-out; }
+        #introText .letter { display: inline-block; opacity: 0; transform: translateY(30px) scale(0.8) rotateX(-45deg); animation: letterFlyIn 0.8s cubic-bezier(0.3, 0.9, 0.4, 1.2) forwards; }
+        #introText .letter.space { width: 0.4em; transform: none; animation: spaceFadeIn 0.1s linear forwards; }
+         @keyframes letterFlyIn{0%{opacity:0;transform:translateY(30px) scale(.8) rotateX(-45deg)}80%{opacity:1;transform:translateY(-5px) scale(1.05) rotateX(10deg)}100%{opacity:1;transform:translateY(0) scale(1) rotateX(0deg)}} @keyframes spaceFadeIn{from{opacity:0}to{opacity:1}}
+        #introInstruction { color: #bbb; font-size: 2.5vw; max-font-size: 20px; text-align: center; opacity: 0; margin-top: 1vh; animation: fadeInSimple 1s ease-in 1.8s forwards; user-select: none; font-family: Arial, sans-serif; font-weight: normal; z-index: 2; position: relative; transition: opacity 0.5s ease-out, transform 0.1s ease-out; }
+         @keyframes fadeInSimple{from{opacity:0}to{opacity:1}}
+         #introScreen:active #introText, #introScreen:active #introInstruction { transform: scale(0.98); }
+        /* Stars */
+        .star { position: absolute; width: 2px; height: 2px; background-color: #ffffff; border-radius: 50%; opacity: 0; box-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff; animation-name: twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; pointer-events: none; z-index: 1; }
+         @keyframes twinkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:.8;transform:scale(1)}}
+        /* Difficulty Screen */
+        #difficultyScreen { opacity: 0; pointer-events: none; background: rgba(0, 0, 0, 0.5); z-index: 100; } #difficultyScreen.visible { opacity: 1; pointer-events: auto; }
+        .difficultyTitle { color: #eee; font-size: 4vw; margin-bottom: 4vh; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.5); }
+        .difficultyButton { background: linear-gradient(145deg, #ff6a00, #ff4500); border: none; color: white; padding: 15px 35px; text-align: center; text-decoration: none; display: inline-block; font-size: 2.5vw; font-family: 'Arial Black', Gadget, sans-serif; margin: 15px; cursor: pointer; border-radius: 8px; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); text-transform: uppercase; letter-spacing: 1px; } .difficultyButton:hover { transform: scale(1.05); box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.7); }
+         .difficultyButton:active { transform: scale(0.95); box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); }
+        /* Game Over Screen */
+         #gameOverScreen { background-color: rgba(0, 0, 0, 0.8); z-index: 102; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in; }
+         #gameOverScreen.visible { opacity: 1; pointer-events: auto; }
+         #gameOverScreen h1 { font-size: 10vw; color: #ff4500; text-shadow: 2px 2px 0 #000, 4px 4px 8px rgba(255, 255, 255, 0.3); margin-bottom: 5vh; }
+         #finalScore { font-size: 4vw; color: #ffffaa; margin-bottom: 4vh; font-family: Arial, sans-serif; font-weight: bold; }
+         #playAgainButton { background: linear-gradient(145deg, #4CAF50, #45a049); border: none; color: white; padding: 18px 40px; text-align: center; text-decoration: none; display: inline-block; font-size: 2.8vw; font-family: 'Arial Black', Gadget, sans-serif; margin: 15px; cursor: pointer; border-radius: 10px; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); text-transform: uppercase; letter-spacing: 1.5px; }
+          #playAgainButton:hover { transform: scale(1.05); box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.6); }
+          #playAgainButton:active { transform: scale(0.95); box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4); }
+        /* Utility classes */
+        .hidden { display: none !important; opacity: 0 !important; pointer-events: none !important; } .fade-out { opacity: 0 !important; pointer-events: none !important; }
+        /* Game Elements */
+        #gameCanvas { display: block; width: 100%; height: 100%; }
+        #moveControls { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 100px; pointer-events: none; z-index: 10; }
+        .controlButton { width: 60px; height: 60px; background-color: rgba(255,255,255,0.5); border: 2px solid #000; border-radius: 50%; text-align: center; line-height: 56px; font-size: 40px; font-weight: bold; color: #000; user-select: none; pointer-events: auto; transition: transform 0.1s ease-out, background-color 0.2s ease-out; }
+        .controlButton:hover { background-color: rgba(255,255,255,0.8); transform: scale(1.1); }
+         .controlButton:active { transform: scale(0.92); background-color: rgba(255, 255, 255, 0.9); }
+        #attribution { position: absolute; top: 15px; left: 15px; color: #ffffff; font-size: 16px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 600; z-index: 11; pointer-events: none; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); white-space: nowrap; }
+        #hud { position: absolute; top: 15px; right: 15px; color: #ffffff; font-family: 'Arial Black', Gadget, sans-serif; font-size: 18px; text-align: right; z-index: 11; pointer-events: none; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+         #hud div { margin-bottom: 5px; transition: transform 0.1s ease-out; } /* Added transition for animation */
+         #hud .gem-collected-effect { transform: scale(1.2); } /* Animation class */
+    </style>
 </head>
 <body>
 
-  <div class="calculator">
-    <input type="text" id="display" disabled value="Subham" /> <!-- Default display showing "Subham" -->
-    <div class="buttons">
-      <button onclick="clearDisplay()" class="clear">C</button>
-      <button onclick="appendValue('(')">(</button>
-      <button onclick="appendValue(')')">)</button>
-      <button onclick="appendValue('/')" class="operator">÷</button>
-
-      <button onclick="appendValue('7')">7</button>
-      <button onclick="appendValue('8')">8</button>
-      <button onclick="appendValue('9')">9</button>
-      <button onclick="appendValue('*')" class="operator">×</button>
-
-      <button onclick="appendValue('4')">4</button>
-      <button onclick="appendValue('5')">5</button>
-      <button onclick="appendValue('6')">6</button>
-      <button onclick="appendValue('-')" class="operator">−</button>
-
-      <button onclick="appendValue('1')">1</button>
-      <button onclick="appendValue('2')">2</button>
-      <button onclick="appendValue('3')">3</button>
-      <button onclick="appendValue('+')" class="operator">+</button>
-
-      <button onclick="appendValue('0')">0</button>
-      <button onclick="appendValue('.')">.</button>
-      <button onclick="calculate()" class="equal">=</button>
+    <!-- Intro Screen -->
+    <div id="introScreen" class="fullscreen-overlay"> <h1 id="introText" data-text="MADE BY SUBHAM"></h1> <p id="introInstruction">(tap or click)</p> </div>
+    <!-- Difficulty Selection Screen -->
+    <div id="difficultyScreen" class="fullscreen-overlay hidden"> <h2 class="difficultyTitle">SELECT DIFFICULTY</h2> <button id="btnNoob" class="difficultyButton">NOOB</button> <button id="btnPro" class="difficultyButton">PRO</button> </div>
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="fullscreen-overlay hidden"> <h1>GAME OVER</h1> <div id="finalScore">Score: 0</div> <button id="playAgainButton">Play Again</button> </div>
+    <!-- Game Elements -->
+    <canvas id="gameCanvas" class="hidden"></canvas>
+    <div id="hud" class="hidden">
+        <div id="scoreDisplay">Score: 0</div> <!-- Added Score Display -->
+        <div id="gemScoreDisplay">Gems: 0</div>
     </div>
-  </div>
+    <div id="moveControls" class="hidden"> <div id="btnLeft" class="controlButton">←</div> <div id="btnRight" class="controlButton">→</div> </div>
+    <div id="attribution" class="hidden">MADE BY SUBHAM</div>
 
-  <script>
-    const display = document.getElementById("display");
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/TextureLoader.js"></script>
 
-    function appendValue(value) {
-      if (display.value === "Subham") { // Clear the default value "Subham" when the user starts typing
-        display.value = "";
-      }
-      display.value += value;
-    }
+    <script>
+        // --- References ---
+        const introScreen = document.getElementById('introScreen'); const introTextElement = document.getElementById('introText'); const introInstruction = document.getElementById('introInstruction'); const difficultyScreen = document.getElementById('difficultyScreen'); const btnNoob = document.getElementById('btnNoob'); const btnPro = document.getElementById('btnPro'); const canvas = document.getElementById('gameCanvas'); const gameOverScreen = document.getElementById('gameOverScreen'); const playAgainButton = document.getElementById('playAgainButton');
+        const hud = document.getElementById('hud'); const scoreDisplay = document.getElementById('scoreDisplay'); const gemScoreDisplay = document.getElementById('gemScoreDisplay'); const finalScoreDisplay = document.getElementById('finalScore');
+        const moveControls = document.getElementById('moveControls'); const attributionText = document.getElementById('attribution'); const btnLeft = document.getElementById('btnLeft'); const btnRight = document.getElementById('btnRight');
 
-    function clearDisplay() {
-      display.value = "Subham"; // Reset the display to show "Subham"
-    }
+        // --- Globals ---
+        let scene, camera, renderer; let player = null, playerBox = new THREE.Box3(); let mixer = null, clock = new THREE.Clock(); let obstacles = []; let trees = []; let forestTrees = []; let mountainGroup; let isGameOver = false; let gameStarted = false; let introClicked = false; let carSpawnInterval; let powerUpSpawnInterval; let gameSpeedIncreaseRate; let playerMoveSpeedFactor; let lastCarTime = 0; let lastTreeTime = 0, treeSpawnInterval = 1000; let lastForestTime = 0, forestSpawnInterval = 3000; let lastPowerUpTime = 0; let gameSpeed = 1.0; let moveLeft = false, moveRight = false; let carModel = null; let roadTexture = null; let roadLineGroup; let rainParticles; let lightningFlash = false; let directionalLight; let backgroundMusic, collisionSound, powerUpSound, shieldBreakSound, gemCollectSound; let powerUps = []; let isPowerUpActive = false; let powerUpEndTime = 0; const POWERUP_DURATION = 15000; let speedBoostFactor = 1.0; let fireEffectParticles = null; let powerUpTextureLoader = new THREE.TextureLoader(); let fireTexture = null; let firePickupModel = null; const WEATHER_STATES = ['CLEAR', 'OVERCAST', 'STORM']; let currentWeatherState = 'CLEAR'; let nextWeatherState = 'CLEAR'; let weatherTransitionProgress = 1.0; const WEATHER_TRANSITION_DURATION = 8.0; const WEATHER_STATE_DURATION = 25.0; let lastWeatherChangeTime = 0; let currentRainOpacity = 0.0; let currentLightningChance = 0.0005; const weatherParameters = { CLEAR: { skyColor: new THREE.Color(0x87CEEB), fogColor: new THREE.Color(0x87CEEB), fogNear: 100, fogFar: 400, ambientIntensity: 0.9, directionalIntensity: 1.0, rainOpacity: 0.0, lightningChance: 0.0001 }, OVERCAST: { skyColor: new THREE.Color(0xAAAAAA), fogColor: new THREE.Color(0xAAAAAA), fogNear: 50, fogFar: 250, ambientIntensity: 0.7, directionalIntensity: 0.7, rainOpacity: 0.3, lightningChance: 0.001 }, STORM: { skyColor: new THREE.Color(0x304050), fogColor: new THREE.Color(0x304050), fogNear: 20, fogFar: 150, ambientIntensity: 0.4, directionalIntensity: 0.5, rainOpacity: 0.8, lightningChance: 0.008 } }; let ambientLight;
+        let score = 0; let gemScore = 0; // Score variables
+        let animationFrameId = null;
+        let roadblocks = []; let lastRoadblockTime = 0; let roadblockSpawnInterval; let roadblockModel = null; let shieldPowerUps = []; let lastShieldPowerUpTime = 0; let shieldPowerUpSpawnInterval; let shieldPickupModel = null; let isShieldActive = false; let shieldVisual = null; let gems = []; let lastGemTime = 0; let gemSpawnInterval; let gemModel = null; const GEM_SCORE_VALUE = 50; let shakeIntensity = 0; let shakeDuration = 0; let shakeTimeRemaining = 0; let baseCameraPos = new THREE.Vector3();
+        // Animation specific globals
+        let playerTargetLean = 0; const PLAYER_LEAN_ANGLE = 0.26; // Radians (~15 degrees)
+        let runAction = null, deathAction = null; // Store animation actions
+        let activeEffects = []; // To manage temporary particle effects
 
-    function calculate() {
-      try {
-        display.value = eval(display.value);
-      } catch {
-        display.value = "Error";
-      }
-    }
-  </script>
+        // --- Functions ---
+        function setupLetterAnimation(element) { if (!element) return; const text = element.getAttribute('data-text'); if (!text) return; element.innerHTML = ''; const initialDelay = 0.2; const delayIncrement = 0.06; text.split('').forEach((char, index) => { const span = document.createElement('span'); span.className = 'letter'; if (char === ' ') { span.innerHTML = ' '; span.classList.add('space'); span.style.animationDelay = `${initialDelay + index * delayIncrement}s`; } else { span.textContent = char; span.style.animationDelay = `${initialDelay + index * delayIncrement}s`; } element.appendChild(span); }); }
+        function createStars(container, count = 50) { if (!container) return; const existingStars = container.querySelectorAll('.star'); existingStars.forEach(s => s.remove()); for (let i = 0; i < count; i++) { const star = document.createElement('div'); star.classList.add('star'); star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`; const size = Math.random() * 1.5 + 1; star.style.width = `${size}px`; star.style.height = `${size}px`; const duration = Math.random() * 1.5 + 1.0; const delay = Math.random() * 2.0; star.style.animationDuration = `${duration}s`; star.style.animationDelay = `${delay}s`; container.appendChild(star); } }
+        document.addEventListener('DOMContentLoaded', () => { setupLetterAnimation(introTextElement); createStars(introScreen, 60); fireTexture = powerUpTextureLoader.load('https://threejs.org/examples/textures/sprites/spark1.png'); });
+        function showDifficultySelection() { if (introClicked) return; introClicked = true; console.log("Intro clicked, showing difficulty..."); introTextElement.classList.add('fade-out'); introInstruction.classList.add('fade-out'); setTimeout(() => { difficultyScreen.classList.remove('hidden'); difficultyScreen.classList.add('visible'); createStars(difficultyScreen, 60); introScreen.style.cursor = 'default'; introScreen.classList.add('fade-out'); setTimeout(() => { if (introScreen) introScreen.remove(); }, 600); }, 600); }
+        function initializeGame(difficulty) { if (gameStarted) return; console.log(`Difficulty selected: ${difficulty}`); score = 0; gemScore = 0; if (difficulty === 'NOOB') { carSpawnInterval = 1800; powerUpSpawnInterval = 7000; gameSpeedIncreaseRate = 0.01; playerMoveSpeedFactor = 15; gameSpeed = 0.9; roadblockSpawnInterval = 15000; shieldPowerUpSpawnInterval = 10000; gemSpawnInterval = 2500; } else { /* PRO */ carSpawnInterval = 1000; powerUpSpawnInterval = 11000; gameSpeedIncreaseRate = 0.025; playerMoveSpeedFactor = 12; gameSpeed = 1.0; roadblockSpawnInterval = 9000; shieldPowerUpSpawnInterval = 14000; gemSpawnInterval = 4000; } gameStarted = true; difficultyScreen.classList.remove('visible'); difficultyScreen.classList.add('fade-out'); setTimeout(() => { if (difficultyScreen) difficultyScreen.remove(); canvas.classList.remove('hidden'); moveControls.classList.remove('hidden'); attributionText.classList.remove('hidden'); hud.classList.remove('hidden'); updateScoreDisplay(); init(); playBackgroundMusicOnce(); }, 600); }
+        introScreen.addEventListener('click', showDifficultySelection, { once: true }); introScreen.addEventListener('touchstart', showDifficultySelection, { once: true }); btnNoob.addEventListener('click', () => initializeGame('NOOB')); btnPro.addEventListener('click', () => initializeGame('PRO')); playAgainButton.addEventListener('click', restartGame); document.addEventListener('keydown', (event) => { if (isGameOver && !gameOverScreen.classList.contains('hidden') && (event.key === 'Enter' || event.key === ' ')) { restartGame(); } });
+        function initAudio() { const listener = new THREE.AudioListener(); camera.add(listener); backgroundMusic = new THREE.Audio(listener); collisionSound = new THREE.Audio(listener); powerUpSound = new THREE.Audio(listener); shieldBreakSound = new THREE.Audio(listener); gemCollectSound = new THREE.Audio(listener); const audioLoader = new THREE.AudioLoader(); audioLoader.load('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', (b) => { backgroundMusic.setBuffer(b); backgroundMusic.setLoop(true); backgroundMusic.setVolume(0.5); if(gameStarted) playBackgroundMusicOnce(); }); audioLoader.load('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg', (b) => { collisionSound.setBuffer(b); collisionSound.setLoop(false); collisionSound.setVolume(1.0); }); audioLoader.load('https://actions.google.com/sounds/v1/magical/magic_chime.ogg', (b) => { powerUpSound.setBuffer(b); powerUpSound.setLoop(false); powerUpSound.setVolume(0.8); }); audioLoader.load('https://actions.google.com/sounds/v1/impacts/glass_shatter.ogg', (b) => { shieldBreakSound.setBuffer(b); shieldBreakSound.setLoop(false); shieldBreakSound.setVolume(0.7); }); audioLoader.load('https://actions.google.com/sounds/v1/coins/coin_drop.ogg', (b) => { gemCollectSound.setBuffer(b); gemCollectSound.setLoop(false); gemCollectSound.setVolume(0.6); }); }
+        function playBackgroundMusicOnce() { if (backgroundMusic && backgroundMusic.buffer && !backgroundMusic.isPlaying) { const context = backgroundMusic.context; if (context.state === 'running') { backgroundMusic.play().catch(e => console.error("Error playing music:", e)); } else { context.resume().then(() => { backgroundMusic.play().catch(e => console.error("Error playing music after resume:", e)); }).catch(err => console.error("Error resuming AudioContext:", err)); } } }
+        function playSound(sound) { if (sound && sound.buffer) { if (sound.isPlaying) { sound.stop(); } const context = sound.context; if (context.state === 'running') { sound.play().catch(e => console.error("Error playing sound:", e)); } else { context.resume().then(() => sound.play()).catch(e => console.error("Error playing sound after resume:", e)); } } }
+        function createRoadLines() { roadLineGroup = new THREE.Group(); const lineLength = 550; const dashLength = 7; const gapLength = 8; const totalSegmentLength = dashLength + gapLength; const numDashes = Math.ceil(lineLength / totalSegmentLength); for(let i = 0; i < numDashes; i++) { let dashGeo = new THREE.PlaneGeometry(0.3, dashLength); let dashMat = new THREE.MeshBasicMaterial({color: 0xffffff}); let dash = new THREE.Mesh(dashGeo, dashMat); dash.rotation.x = -Math.PI/2; dash.position.set(0, 0.06, (i * totalSegmentLength) - (lineLength / 2) + (dashLength / 2) + 25); roadLineGroup.add(dash); } scene.add(roadLineGroup); roadLineGroup.userData.patternLength = lineLength; }
+        function createRoadEdgeLines() { const roadLength = 550; const edgeGeo = new THREE.PlaneGeometry(0.2, roadLength); const edgeMat = new THREE.MeshStandardMaterial({color: 0xffff00}); const leftEdge = new THREE.Mesh(edgeGeo, edgeMat); leftEdge.rotation.x = -Math.PI/2; leftEdge.position.set(-4.5, 0.07, roadLength / 2 - 25); scene.add(leftEdge); const rightEdge = new THREE.Mesh(edgeGeo, edgeMat); rightEdge.rotation.x = -Math.PI/2; rightEdge.position.set(4.5, 0.07, roadLength / 2 - 25); scene.add(rightEdge); }
+        function createRain() { const rainGeometry = new THREE.BufferGeometry(); const rainCount = 1500; const positions = new Float32Array(rainCount * 3); const velocities = new Float32Array(rainCount); for (let i = 0; i < rainCount; i++) { positions[i*3] = Math.random() * 60 - 30; positions[i*3+1] = Math.random() * 30 + 20; positions[i*3+2] = Math.random() * 250 - 100; velocities[i] = Math.random() * 0.1 + 0.15; } rainGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); rainGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 1)); const rainMaterial = new THREE.PointsMaterial({ color: 0x99ccff, size: 0.1, transparent: true, opacity: 0.0, depthWrite: false }); rainParticles = new THREE.Points(rainGeometry, rainMaterial); scene.add(rainParticles); }
+        function createTree(side) { const tree = new THREE.Group(); const trunkHeight = 3; const foliageHeight = 4; const trunkGeo = new THREE.CylinderGeometry(0.3, 0.3, trunkHeight, 12); const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); const trunk = new THREE.Mesh(trunkGeo, trunkMat); trunk.position.y = trunkHeight / 2; trunk.castShadow = true; tree.add(trunk); const foliageGeo = new THREE.ConeGeometry(1.5, foliageHeight, 12); const foliageMat = new THREE.MeshStandardMaterial({ color: 0x228B22 }); const foliage = new THREE.Mesh(foliageGeo, foliageMat); foliage.position.y = trunkHeight + foliageHeight * 0.4; foliage.castShadow = true; tree.add(foliage); tree.position.x = side * (6 + Math.random() * 2); tree.position.z = 100 + Math.random() * 100; return tree; }
+        function spawnTrees() { const treeLeft = createTree(-1); const treeRight = createTree(1); scene.add(treeLeft); scene.add(treeRight); trees.push(treeLeft, treeRight); }
+        function createForestTree() { const tree = new THREE.Group(); const trunkHeight = Math.random()*2 + 3; const trunkGeo = new THREE.CylinderGeometry(0.4, 0.5, trunkHeight, 8); const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6a4a3a }); const trunk = new THREE.Mesh(trunkGeo, trunkMat); trunk.position.y = trunkHeight / 2; trunk.castShadow = true; tree.add(trunk); const foliageHeight = Math.random() * 3 + 4; const foliageRadius = Math.random() * 1 + 1.5; const foliageGeo = new THREE.ConeGeometry(foliageRadius, foliageHeight, 10); const foliageMat = new THREE.MeshStandardMaterial({ color: 0x2E8B57 }); const foliage = new THREE.Mesh(foliageGeo, foliageMat); foliage.position.y = trunkHeight + foliageHeight * 0.4; foliage.castShadow = true; tree.add(foliage); tree.position.x = (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 20); tree.position.z = 150 + Math.random() * 200; tree.scale.setScalar(1 + Math.random() * 0.5); return tree; }
+        function spawnForestTrees() { const tree1 = createForestTree(); scene.add(tree1); forestTrees.push(tree1); }
+        function createMountains() { mountainGroup = new THREE.Group(); for (let i = 0; i < 8; i++) { const radius = Math.random() * 10 + 15; const height = Math.random() * 25 + 35; const mountainGeo = new THREE.ConeGeometry(radius, height, Math.floor(Math.random() * 5) + 6); const mountainMat = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(0.3 + Math.random() * 0.1, 0.5, 0.3 + Math.random() * 0.2), roughness: 1.0, flatShading: true }); const mountain = new THREE.Mesh(mountainGeo, mountainMat); mountain.castShadow = true; mountain.position.x = (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 20); mountain.position.z = 300 + Math.random() * 200; mountain.position.y = height / 2 - 2; mountainGroup.add(mountain); } scene.add(mountainGroup); }
+        function createPowerUpItem() {
+            // <<< NEW Fallback: Glowing Tetrahedron >>>
+            if (!firePickupModel) {
+                console.warn("Fire pickup model not loaded, spawning fallback Tetrahedron.");
+                const fallbackGeo = new THREE.TetrahedronGeometry(0.6, 0); // Slightly larger, spikier
+                const fallbackMat = new THREE.MeshStandardMaterial({
+                    color: 0xff8800,
+                    emissive: 0xff6600, // Make it glow
+                    emissiveIntensity: 0.8,
+                    metalness: 0.2,
+                    roughness: 0.4
+                });
+                const fallbackItem = new THREE.Mesh(fallbackGeo, fallbackMat);
+                fallbackItem.userData.isFallback = true;
+                fallbackItem.userData.bobOffset = Math.random() * Math.PI * 2;
+                fallbackItem.userData.baseY = 0.8;
+                fallbackItem.position.y = fallbackItem.userData.baseY;
+                fallbackItem.castShadow = true;
+                addGlowEffects(fallbackItem, 0xffaa44, 2.0); // Use generic glow
+                return fallbackItem;
+            }
+            // Original model loading if available
+            const fireItem = firePickupModel.scene.clone();
+            fireItem.scale.set(0.8, 0.8, 0.8);
+            fireItem.traverse(child => { if (child.isMesh) child.castShadow = true; });
+            fireItem.userData.bobOffset = Math.random() * Math.PI * 2;
+            fireItem.userData.baseY = 0.8;
+            fireItem.position.y = fireItem.userData.baseY;
+            addGlowEffects(fireItem, 0xffaa44, 1.8); // Original fire glow
+            return fireItem;
+         }
+        // <<< Modified addGlowEffects to accept color and intensity >>>
+        function addGlowEffects(itemObject, glowColor = 0xffcc66, lightIntensity = 1.8, spriteScale = 2.5) {
+            // Point Light
+            const existingLight = itemObject.getObjectByProperty('type', 'PointLight');
+            if (existingLight) itemObject.remove(existingLight); // Remove old if exists
+            const pointLight = new THREE.PointLight(glowColor, lightIntensity, 8);
+            pointLight.position.set(0, 0.6, 0);
+            itemObject.add(pointLight);
 
+            // Glow Sprite
+             if (fireTexture) {
+                const existingSprite = itemObject.getObjectByProperty('type', 'Sprite');
+                if (existingSprite) itemObject.remove(existingSprite); // Remove old if exists
+
+                const glowMaterial = new THREE.SpriteMaterial({
+                    map: fireTexture,
+                    color: glowColor,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    opacity: 0.7,
+                    depthWrite: false,
+                    sizeAttenuation: true
+                });
+                const glowSprite = new THREE.Sprite(glowMaterial);
+                glowSprite.scale.set(spriteScale, spriteScale, 1.0);
+                glowSprite.position.set(0, 0.7, 0); // Adjust position slightly if needed
+                itemObject.add(glowSprite);
+                itemObject.userData.glowSprite = glowSprite; // Keep reference if needed
+             }
+         }
+        function spawnPowerUp() { if (!scene || !player) return; const powerUp = createPowerUpItem(); if (!powerUp) return; powerUp.position.x = (Math.random() - 0.5) * 8; powerUp.position.z = player.position.z + 200 + Math.random() * 100; powerUp.userData.box = new THREE.Box3().setFromObject(powerUp); scene.add(powerUp); powerUps.push(powerUp); }
+        function createFireEffect() { const particleCount = 150; const positions = new Float32Array(particleCount * 3); const velocities = new Float32Array(particleCount * 3); const fireGeometry = new THREE.BufferGeometry(); fireGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); fireGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3)); const fireMaterial = new THREE.PointsMaterial({ color: 0xffaa33, size: 0.6, map: fireTexture, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, sizeAttenuation: true, opacity: 0.8 }); fireEffectParticles = new THREE.Points(fireGeometry, fireMaterial); fireEffectParticles.visible = false; }
+        function activatePowerUp() { if (isPowerUpActive) { powerUpEndTime += POWERUP_DURATION; console.log("Power-up extended!"); } else { isPowerUpActive = true; powerUpEndTime = performance.now() + POWERUP_DURATION; speedBoostFactor = 1.50; console.log("Power-up activated!"); if (player && fireEffectParticles) { player.add(fireEffectParticles); fireEffectParticles.visible = true; const positions = fireEffectParticles.geometry.attributes.position.array; const velocities = fireEffectParticles.geometry.attributes.velocity.array; for (let i = 0; i < positions.length; i += 3) { positions[i] = (Math.random() - 0.5) * 1.5; positions[i + 1] = Math.random() * 1.5; positions[i + 2] = (Math.random() - 0.5) * 1.5; velocities[i] = (Math.random() - 0.5) * 0.01; velocities[i+1] = Math.random() * 0.03 + 0.02; velocities[i+2] = (Math.random() - 0.5) * 0.01; } fireEffectParticles.geometry.attributes.position.needsUpdate = true; fireEffectParticles.geometry.attributes.velocity.needsUpdate = true; } } playSound(powerUpSound); }
+        function deactivatePowerUp() { console.log("Power-up deactivated."); isPowerUpActive = false; speedBoostFactor = 1.0; if (player && fireEffectParticles && fireEffectParticles.parent === player) { player.remove(fireEffectParticles); } fireEffectParticles.visible = false; }
+        function createRoadblock() { const blockGeo = new THREE.BoxGeometry(2, 1, 0.5); const blockMat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.8 }); const block = new THREE.Mesh(blockGeo, blockMat); block.castShadow = true; block.position.y = 0.5; block.userData.box = new THREE.Box3().setFromObject(block); return block; }
+        function spawnRoadblock() { if (!scene || !player) return; const block = createRoadblock(); const rand = Math.random(); if (rand < 0.4) block.position.x = -2.5; else if (rand < 0.8) block.position.x = 2.5; else block.position.x = 0; block.position.z = player.position.z + 200 + Math.random() * 150; scene.add(block); roadblocks.push(block); }
+        function createShieldPickup() { const shieldGeo = new THREE.SphereGeometry(0.4, 16, 16); const shieldMat = new THREE.MeshStandardMaterial({ color: 0x00BFFF, emissive: 0x00BFFF, emissiveIntensity: 0.7, transparent: true, opacity: 0.8 }); const pickup = new THREE.Mesh(shieldGeo, shieldMat); pickup.castShadow = true; pickup.userData.bobOffset = Math.random() * Math.PI * 2; pickup.userData.baseY = 0.8; pickup.position.y = pickup.userData.baseY; addGlowEffects(pickup, 0x00BFFF, 1.5, 2.0); // Use generic glow with shield color
+            pickup.userData.box = new THREE.Box3().setFromObject(pickup); return pickup; }
+        function spawnShieldPowerUp() { if (!scene || !player) return; const shieldPickup = createShieldPickup(); shieldPickup.position.x = (Math.random() - 0.5) * 8; shieldPickup.position.z = player.position.z + 180 + Math.random() * 120; scene.add(shieldPickup); shieldPowerUps.push(shieldPickup); }
+         function createShieldVisual() { if (!player) return; const shieldGeo = new THREE.SphereGeometry(1.2, 32, 16); const shieldMat = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.35, depthWrite: false, side: THREE.FrontSide }); shieldVisual = new THREE.Mesh(shieldGeo, shieldMat); shieldVisual.visible = false; player.add(shieldVisual); }
+        function activateShield() { if (!isShieldActive) { isShieldActive = true; if(shieldVisual) shieldVisual.visible = true; playSound(powerUpSound); console.log("Shield Activated!"); } }
+        function deactivateShield(playBreakSound = true, position = null) { // Added position parameter
+            if (isShieldActive) {
+                isShieldActive = false;
+                if(shieldVisual) shieldVisual.visible = false;
+                if(playBreakSound) {
+                    playSound(shieldBreakSound);
+                    // <<< NEW: Spawn shield break effect >>>
+                    const breakPosition = position || (player ? player.position : new THREE.Vector3(0,1,0));
+                    createBurstEffect(breakPosition, 0xADD8E6, 30); // Light blue burst
+                }
+                console.log("Shield Deactivated!");
+            }
+        }
+        function createGem() {
+            const gemGeo = new THREE.OctahedronGeometry(0.35, 0);
+            const gemMat = new THREE.MeshStandardMaterial({ color: 0x00FF7F, emissive: 0x32CD32, emissiveIntensity: 0.5, metalness: 0.3, roughness: 0.2 });
+            const gem = new THREE.Mesh(gemGeo, gemMat); gem.castShadow = true; gem.userData.bobOffset = Math.random() * Math.PI * 2; gem.userData.baseY = 0.6; gem.position.y = gem.userData.baseY;
+            addGlowEffects(gem, 0x90EE90, 1.5, 1.8); // Use generic glow with green color, adjusted scale
+            gem.userData.box = new THREE.Box3().setFromObject(gem); return gem;
+        }
+        function spawnGem() { if (!scene || !player) return; const gem = createGem(); gem.position.x = (Math.random() - 0.5) * 8; gem.position.z = player.position.z + 100 + Math.random() * 80; scene.add(gem); gems.push(gem); }
+        function triggerScreenShake(intensity, duration) { if (shakeTimeRemaining <= 0) { shakeIntensity = intensity; shakeDuration = duration; shakeTimeRemaining = duration; baseCameraPos.copy(camera.position); } }
+        function updateScoreDisplay() {
+             if (scoreDisplay) scoreDisplay.textContent = `Score: ${score}`;
+             if (gemScoreDisplay) {
+                gemScoreDisplay.textContent = `Gems: ${gemScore}`;
+             }
+        }
+        // <<< NEW: Animate Gem Score HUD >>>
+        function animateGemScoreUpdate() {
+            if (gemScoreDisplay) {
+                gemScoreDisplay.classList.add('gem-collected-effect');
+                setTimeout(() => {
+                    gemScoreDisplay.classList.remove('gem-collected-effect');
+                }, 150); // Duration of the visual effect
+            }
+        }
+        // <<< NEW: Simple Particle Burst Effect >>>
+        function createBurstEffect(position, color, count = 20, size = 0.15, speed = 2.0, duration = 0.5) {
+            if (!scene || !fireTexture) return; // Need scene and a texture
+
+            const burstGeometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const velocities = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                positions[i * 3] = position.x;
+                positions[i * 3 + 1] = position.y + 0.5; // Start slightly above center
+                positions[i * 3 + 2] = position.z;
+
+                const phi = Math.random() * Math.PI * 2;
+                const theta = Math.acos((Math.random() * 2) - 1);
+                const r = Math.random() * speed;
+
+                velocities[i * 3] = r * Math.sin(theta) * Math.cos(phi);
+                velocities[i * 3 + 1] = r * Math.cos(theta);
+                velocities[i * 3 + 2] = r * Math.sin(theta) * Math.sin(phi);
+            }
+
+            burstGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            burstGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+
+            const burstMaterial = new THREE.PointsMaterial({
+                color: color,
+                size: size,
+                map: fireTexture, // Reuse spark texture
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.9,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const burstParticles = new THREE.Points(burstGeometry, burstMaterial);
+            burstParticles.userData.startTime = performance.now();
+            burstParticles.userData.duration = duration * 1000; // Store duration in ms
+            burstParticles.userData.isBurst = true; // Mark as temporary effect
+
+            scene.add(burstParticles);
+            activeEffects.push(burstParticles); // Add to list for management
+        }
+        // <<< NEW: Update Temporary Effects >>>
+        function updateEffects(delta) {
+            const now = performance.now();
+            for (let i = activeEffects.length - 1; i >= 0; i--) {
+                const effect = activeEffects[i];
+                const elapsedTime = now - effect.userData.startTime;
+
+                if (elapsedTime > effect.userData.duration) {
+                    // Remove effect
+                    scene.remove(effect);
+                    if (effect.geometry) effect.geometry.dispose();
+                    if (effect.material) effect.material.dispose();
+                    activeEffects.splice(i, 1);
+                    continue;
+                }
+
+                // Update particle positions for bursts
+                if (effect.userData.isBurst) {
+                    const positions = effect.geometry.attributes.position.array;
+                    const velocities = effect.geometry.attributes.velocity.array;
+                    for (let j = 0; j < positions.length; j += 3) {
+                        positions[j] += velocities[j] * delta;
+                        positions[j + 1] += velocities[j + 1] * delta;
+                        positions[j + 2] += velocities[j + 2] * delta;
+                        // Optional: Add gravity or drag
+                        velocities[j+1] -= 1.0 * delta; // Simple gravity
+                    }
+                    effect.geometry.attributes.position.needsUpdate = true;
+
+                    // Fade out effect
+                    const lifeLeft = 1.0 - (elapsedTime / effect.userData.duration);
+                    effect.material.opacity = Math.max(0, lifeLeft * 0.9); // Fade out
+                }
+            }
+        }
+
+        // --- Initialize 3D Scene ---
+        function init() { console.log("Initializing 3D Scene..."); scene = new THREE.Scene(); scene.fog = new THREE.Fog( weatherParameters.CLEAR.fogColor, weatherParameters.CLEAR.fogNear, weatherParameters.CLEAR.fogFar ); scene.background = weatherParameters.CLEAR.skyColor.clone(); camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); camera.position.set(0, 4, -5); camera.lookAt(0, 0, 50); renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(window.devicePixelRatio); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; ambientLight = new THREE.AmbientLight(0xffffff, weatherParameters.CLEAR.ambientIntensity); scene.add(ambientLight); directionalLight = new THREE.DirectionalLight(0xffffff, weatherParameters.CLEAR.directionalIntensity); directionalLight.position.set(5, 15, -15); directionalLight.castShadow = true; directionalLight.shadow.mapSize.width = 1024; directionalLight.shadow.mapSize.height = 1024; directionalLight.shadow.camera.near = 0.5; directionalLight.shadow.camera.far = 60; directionalLight.shadow.camera.left = -25; directionalLight.shadow.camera.right = 25; directionalLight.shadow.camera.top = 25; directionalLight.shadow.camera.bottom = -25; scene.add(directionalLight); const textureLoader = new THREE.TextureLoader(); const roadLength = 550; const grassTexture = textureLoader.load('https://threejs.org/examples/textures/grasslight-big.jpg'); grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping; grassTexture.repeat.set(30, 30 * (roadLength / 100)); grassTexture.anisotropy = renderer.capabilities.getMaxAnisotropy(); const groundGeometry = new THREE.PlaneGeometry(100, roadLength); const groundMaterial = new THREE.MeshStandardMaterial({ map: grassTexture, color: 0x608040, roughness: 0.9 }); const ground = new THREE.Mesh(groundGeometry, groundMaterial); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; ground.position.z = roadLength / 2 - 25; scene.add(ground); roadTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/2/25/AsphaltRoad.jpg'); roadTexture.wrapS = roadTexture.wrapT = THREE.RepeatWrapping; roadTexture.repeat.set(1, roadLength / 10); roadTexture.anisotropy = renderer.capabilities.getMaxAnisotropy(); const roadGeometry = new THREE.PlaneGeometry(10, roadLength); const roadMaterial = new THREE.MeshStandardMaterial({ map: roadTexture, color: 0x404040, roughness: 0.8, metalness: 0.1 }); const road = new THREE.Mesh(roadGeometry, roadMaterial); road.rotation.x = -Math.PI / 2; road.receiveShadow = true; road.position.set(0, 0.05, roadLength / 2 - 25); scene.add(road); createRoadEdgeLines(); createRoadLines(); createRain(); createMountains(); createFireEffect(); const gltfLoader = new THREE.GLTFLoader(); gltfLoader.load('https://threejs.org/examples/models/gltf/Soldier.glb', function(gltf) { player = gltf.scene; player.scale.set(1.2, 1.2, 1.2); player.rotation.y = Math.PI; player.position.set(0, 0, 5); player.traverse(child => { if(child.isMesh) { child.castShadow = true; child.receiveShadow = false; }}); scene.add(player); playerBox.setFromObject(player); mixer = new THREE.AnimationMixer(player);
+            // <<< Setup Run and Death Animations >>>
+            runAction = null; deathAction = null; // Reset actions
+            const runClip = THREE.AnimationClip.findByName(gltf.animations, 'Run');
+            const deathClip = THREE.AnimationClip.findByName(gltf.animations, 'Death');
+            if (runClip) {
+                runAction = mixer.clipAction(runClip);
+                runAction.play(); // Start running immediately
+                 console.log("Run animation found and playing.");
+            } else if (gltf.animations.length > 0) {
+                runAction = mixer.clipAction(gltf.animations[0]); // Fallback to first animation
+                runAction.play();
+                 console.warn("No 'Run' animation found, playing first animation as fallback.");
+            } else {
+                 console.warn("No animations found for player model.");
+             }
+             if (deathClip) {
+                 deathAction = mixer.clipAction(deathClip);
+                 deathAction.setLoop(THREE.LoopOnce); // Play only once
+                 deathAction.clampWhenFinished = true; // Stay on the last frame
+                 console.log("Death animation found.");
+             } else {
+                 console.warn("No 'Death' animation found for player model.");
+             }
+            createShieldVisual(); }, undefined, function(error) { console.error('Error loading player model:', error); const fallbackGeo = new THREE.BoxGeometry(1, 2, 1); const fallbackMat = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); player = new THREE.Mesh(fallbackGeo, fallbackMat); player.position.set(0, 1, 5); player.castShadow = true; scene.add(player); playerBox.setFromObject(player); createShieldVisual(); }); gltfLoader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf', function(gltf) { carModel = gltf.scene; carModel.scale.set(0.5, 0.5, 0.5); carModel.traverse(child => { if(child.isMesh) { child.castShadow = true; child.receiveShadow = true; } }); }, undefined, function(error) { console.error('Error loading car model:', error); });
+        // NOTE: Still using placeholder for fire model - fallback tetrahedron will be used.
+        gltfLoader.load('https://path/to/your/fire_model.glb', function (gltf) { firePickupModel = gltf; console.log("Fire pickup model loaded."); }, undefined, function (error) { /* Error handled in createPowerUpItem */ } );
+        initAudio(); window.addEventListener('resize', onWindowResize, false); window.addEventListener('keydown', onKeyDown, false); window.addEventListener('keyup', onKeyUp, false); ['touchstart', 'mousedown'].forEach(evtType => { btnLeft.addEventListener(evtType, (e) => { e.preventDefault(); moveLeft = true; }); btnRight.addEventListener(evtType, (e) => { e.preventDefault(); moveRight = true; }); }); ['touchend', 'mouseup', 'mouseleave'].forEach(evtType => { btnLeft.addEventListener(evtType, (e) => { e.preventDefault(); moveLeft = false; }); btnRight.addEventListener(evtType, (e) => { e.preventDefault(); moveRight = false; }); }); canvas.addEventListener('click', function() {}); canvas.addEventListener('touchstart', function(e) {}); lastCarTime = performance.now(); lastTreeTime = performance.now(); lastForestTime = performance.now(); lastPowerUpTime = performance.now(); lastWeatherChangeTime = performance.now(); lastRoadblockTime = performance.now() + roadblockSpawnInterval / 2; lastShieldPowerUpTime = performance.now() + shieldPowerUpSpawnInterval / 3; lastGemTime = performance.now(); animate(); console.log("Game Initialized and Animation Loop Started."); }
+        function onWindowResize() { if (!renderer) return; camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
+        function onKeyDown(event) { if (!gameStarted || isGameOver) return; if(event.key === "ArrowLeft" || event.key.toLowerCase() === "a") moveLeft = true; if(event.key === "ArrowRight" || event.key.toLowerCase() === "d") moveRight = true; }
+        function onKeyUp(event) { if (!gameStarted || isGameOver) return; if(event.key === "ArrowLeft" || event.key.toLowerCase() === "a") moveLeft = false; if(event.key === "ArrowRight" || event.key.toLowerCase() === "d") moveRight = false; }
+        function spawnCar() { if(!carModel || !scene || !player) return; const car = carModel.clone(); car.position.x = (Math.random() - 0.5) * 8; car.position.z = player.position.z + 200 + Math.random()*100; car.rotation.y = Math.PI; car.userData.bounceOffset = Math.random() * Math.PI * 2; scene.add(car); obstacles.push(car); }
+        function updateWeather(delta) { const now = performance.now(); if (weatherTransitionProgress >= 1.0 && now - lastWeatherChangeTime > WEATHER_STATE_DURATION * 1000) { const availableStates = WEATHER_STATES.filter(state => state !== currentWeatherState); nextWeatherState = availableStates[Math.floor(Math.random() * availableStates.length)]; weatherTransitionProgress = 0.0; lastWeatherChangeTime = now; console.log(`Weather changing from ${currentWeatherState} to ${nextWeatherState}`); } let targetParams = weatherParameters[currentWeatherState]; let transitionAlpha = 1.0; if (weatherTransitionProgress < 1.0) { weatherTransitionProgress += delta / WEATHER_TRANSITION_DURATION; weatherTransitionProgress = Math.min(weatherTransitionProgress, 1.0); transitionAlpha = weatherTransitionProgress; targetParams = weatherParameters[nextWeatherState]; const startParams = weatherParameters[currentWeatherState]; scene.background.lerpColors(startParams.skyColor, targetParams.skyColor, transitionAlpha); scene.fog.color.lerpColors(startParams.fogColor, targetParams.fogColor, transitionAlpha); scene.fog.near = THREE.MathUtils.lerp(startParams.fogNear, targetParams.fogNear, transitionAlpha); scene.fog.far = THREE.MathUtils.lerp(startParams.fogFar, targetParams.fogFar, transitionAlpha); ambientLight.intensity = THREE.MathUtils.lerp(startParams.ambientIntensity, targetParams.ambientIntensity, transitionAlpha); directionalLight.intensity = THREE.MathUtils.lerp(startParams.directionalIntensity, targetParams.directionalIntensity, transitionAlpha); currentRainOpacity = THREE.MathUtils.lerp(startParams.rainOpacity, targetParams.rainOpacity, transitionAlpha); currentLightningChance = THREE.MathUtils.lerp(startParams.lightningChance, targetParams.lightningChance, transitionAlpha); if (weatherTransitionProgress >= 1.0) { currentWeatherState = nextWeatherState; console.log(`Weather reached: ${currentWeatherState}`); } } else { if(scene.background.getHex() !== targetParams.skyColor.getHex()) scene.background.copy(targetParams.skyColor); if(scene.fog.color.getHex() !== targetParams.fogColor.getHex()) scene.fog.color.copy(targetParams.fogColor); if(scene.fog.near !== targetParams.fogNear) scene.fog.near = targetParams.fogNear; if(scene.fog.far !== targetParams.fogFar) scene.fog.far = targetParams.fogFar; if(ambientLight.intensity !== targetParams.ambientIntensity) ambientLight.intensity = targetParams.ambientIntensity; if(directionalLight.intensity !== targetParams.directionalIntensity) directionalLight.intensity = targetParams.directionalIntensity; currentRainOpacity = targetParams.rainOpacity; currentLightningChance = targetParams.lightningChance; } if (rainParticles) { rainParticles.material.opacity = currentRainOpacity; rainParticles.visible = currentRainOpacity > 0.01; } }
+
+        // --- Main Animation Loop ---
+        function animate() {
+            if (isGameOver) { /* Allow death animation to finish if playing */ if (!deathAction || !deathAction.isRunning()) { cancelAnimationFrame(animationFrameId); animationFrameId = null; return; } }
+            animationFrameId = requestAnimationFrame(animate);
+
+            const now = performance.now();
+            const delta = Math.min(clock.getDelta(), 0.05); // Use THREE Clock delta, capped
+
+            if(mixer) mixer.update(delta); // Update player animations
+
+            // Don't update game logic if game is over (but keep rendering for death anim)
+            if (!isGameOver) {
+                updateWeather(delta);
+                gameSpeed += delta * gameSpeedIncreaseRate;
+                score += Math.floor(gameSpeed * speedBoostFactor * delta * 10); // Update score based on speed
+                updateScoreDisplay(); // Update HUD
+
+                // Environment Movement
+                if(roadTexture) { roadTexture.offset.y -= gameSpeed * speedBoostFactor * delta * 0.5; if (roadTexture.offset.y < -1.0) roadTexture.offset.y += 1.0; }
+                if (roadLineGroup) { roadLineGroup.children.forEach(dash => { dash.position.z -= gameSpeed * speedBoostFactor * delta * 60; if(dash.position.z < -roadLineGroup.userData.patternLength / 2 - 50) { dash.position.z += roadLineGroup.userData.patternLength; } }); }
+                const playerWorldPos = new THREE.Vector3(); player?.getWorldPosition(playerWorldPos);
+                if(rainParticles) { const positions = rainParticles.geometry.attributes.position.array; const velocities = rainParticles.geometry.attributes.velocity.array; for(let i = 0; i < positions.length; i += 3) { positions[i+1] -= velocities[i/3] * gameSpeed * speedBoostFactor * delta * 30; positions[i+2] -= gameSpeed * speedBoostFactor * delta * 15; if(positions[i+1] < 0 || positions[i+2] < playerWorldPos.z - 50) { positions[i+1] = Math.random() * 30 + 20; positions[i] = Math.random() * 60 - 30; positions[i+2] = playerWorldPos.z + Math.random() * 200 + 50; } } rainParticles.geometry.attributes.position.needsUpdate = true; }
+                if (Math.random() < currentLightningChance + delta * 0.01 && !lightningFlash && directionalLight) { lightningFlash = true; const flashIntensity = 3.0 + Math.random() * 2.0 + weatherParameters[currentWeatherState].directionalIntensity; const originalIntensity = directionalLight.intensity; const originalBg = scene.background.clone(); directionalLight.intensity = flashIntensity; scene.background.set(0xffffff); setTimeout(() => { if(directionalLight) directionalLight.intensity = originalIntensity; if(scene) scene.background.copy(originalBg); lightningFlash = false; }, Math.random() * 50 + 80); }
+
+                // Spawning Logic
+                const effectiveSpeed = gameSpeed * speedBoostFactor; // Use this for movement/spawning speed calcs
+                const currentCarInterval = Math.max(350, carSpawnInterval / (1 + gameSpeed * 0.15)); if(now - lastCarTime > currentCarInterval) { spawnCar(); lastCarTime = now; }
+                const currentTreeInterval = Math.max(300, treeSpawnInterval / (1 + gameSpeed * 0.05)); if(now - lastTreeTime > currentTreeInterval) { spawnTrees(); lastTreeTime = now; }
+                const currentForestInterval = Math.max(800, forestSpawnInterval / (1 + gameSpeed * 0.05)); if(now - lastForestTime > currentForestInterval) { spawnForestTrees(); lastForestTime = now; }
+                const currentPowerUpInterval = powerUpSpawnInterval / (1 + gameSpeed * 0.05); if (now - lastPowerUpTime > currentPowerUpInterval) { spawnPowerUp(); lastPowerUpTime = now; }
+                const currentRoadblockInterval = roadblockSpawnInterval / (1 + gameSpeed * 0.08); if (now - lastRoadblockTime > currentRoadblockInterval) { spawnRoadblock(); lastRoadblockTime = now; }
+                const currentShieldInterval = shieldPowerUpSpawnInterval / (1 + gameSpeed * 0.05); if (now - lastShieldPowerUpTime > currentShieldInterval) { spawnShieldPowerUp(); lastShieldPowerUpTime = now; }
+                const currentGemInterval = gemSpawnInterval / (1 + gameSpeed * 0.1); if (now - lastGemTime > currentGemInterval) { spawnGem(); lastGemTime = now; }
+
+                // Update Object Positions & Check Collisions
+                let collisionDetected = false; // Reset collision flag each frame
+                if (player) { // Ensure player exists
+                    playerBox.setFromObject(player); // Update player box once per frame
+                    const carApproachSpeedFactor = 1.2;
+
+                    // Cars
+                    for(let i = obstacles.length - 1; i >= 0 && !collisionDetected; i--) {
+                        const car = obstacles[i];
+                        const totalCarSpeed = effectiveSpeed + carApproachSpeedFactor;
+                        car.position.z -= totalCarSpeed * delta * 60;
+                        car.position.y = Math.sin(now * 0.005 + car.userData.bounceOffset) * 0.02;
+                        if(car.position.z < playerWorldPos.z - 30) { scene.remove(car); obstacles.splice(i, 1); continue; }
+                        const carBox = new THREE.Box3().setFromObject(car);
+                        if(playerBox.intersectsBox(carBox)) {
+                            if (isShieldActive) { deactivateShield(true, car.position); scene.remove(car); obstacles.splice(i, 1); }
+                            else if (isPowerUpActive) { triggerScreenShake(0.1, 0.2); scene.remove(car); obstacles.splice(i, 1); /* Smash through */ }
+                            else { playSound(collisionSound); collisionDetected = true; endGame(); }
+                        }
+                    }
+                    // Roadblocks
+                    for (let i = roadblocks.length - 1; i >= 0 && !collisionDetected; i--) {
+                        const block = roadblocks[i]; block.position.z -= effectiveSpeed * delta * 60;
+                        if (block.position.z < playerWorldPos.z - 30) { scene.remove(block); roadblocks.splice(i, 1); continue; }
+                        block.userData.box.setFromObject(block);
+                        if (playerBox.intersectsBox(block.userData.box)) {
+                            if (isShieldActive) { deactivateShield(true, block.position); scene.remove(block); roadblocks.splice(i, 1); }
+                            else { playSound(collisionSound); collisionDetected = true; endGame(); }
+                        }
+                    }
+                    // Fire Power-ups
+                     for (let i = powerUps.length - 1; i >= 0 && !collisionDetected; i--) {
+                        const powerUp = powerUps[i]; powerUp.position.z -= effectiveSpeed * delta * 60; powerUp.position.y = powerUp.userData.baseY + Math.sin(now * 0.003 + powerUp.userData.bobOffset) * 0.2;
+                        // <<< More noticeable rotation for fallback tetrahedron >>>
+                        if (powerUp.userData.isFallback) { powerUp.rotation.y += delta * 2.5; powerUp.rotation.x += delta * 1.5; }
+                        else { powerUp.rotation.y += delta * 1.5; }
+
+                        if(powerUp.userData.box) powerUp.userData.box.setFromObject(powerUp); else powerUp.userData.box = new THREE.Box3().setFromObject(powerUp);
+                        if (powerUp.position.z < playerWorldPos.z - 30) { scene.remove(powerUp); powerUps.splice(i, 1); continue; }
+                        if (powerUp.userData.box && playerBox.intersectsBox(powerUp.userData.box)) { activatePowerUp(); scene.remove(powerUp); powerUps.splice(i, 1); }
+                    }
+                    // Shield Power-ups
+                     for (let i = shieldPowerUps.length - 1; i >= 0 && !collisionDetected; i--) {
+                        const shieldPickup = shieldPowerUps[i]; shieldPickup.position.z -= effectiveSpeed * delta * 60; shieldPickup.position.y = shieldPickup.userData.baseY + Math.sin(now * 0.003 + shieldPickup.userData.bobOffset) * 0.2; shieldPickup.rotation.y += delta * 1.5;
+                        if(shieldPickup.userData.box) shieldPickup.userData.box.setFromObject(shieldPickup); else shieldPickup.userData.box = new THREE.Box3().setFromObject(shieldPickup);
+                        if (shieldPickup.position.z < playerWorldPos.z - 30) { scene.remove(shieldPickup); shieldPowerUps.splice(i, 1); continue; }
+                        if (shieldPickup.userData.box && playerBox.intersectsBox(shieldPickup.userData.box)) { activateShield(); scene.remove(shieldPickup); shieldPowerUps.splice(i, 1); }
+                     }
+                     // Gems
+                     for (let i = gems.length - 1; i >= 0 && !collisionDetected; i--) {
+                        const gem = gems[i]; gem.position.z -= effectiveSpeed * delta * 60; gem.position.y = gem.userData.baseY + Math.sin(now * 0.004 + gem.userData.bobOffset) * 0.15; gem.rotation.y += delta * 2.5; gem.rotation.x += delta * 1.0;
+                        if(gem.userData.box) gem.userData.box.setFromObject(gem); else gem.userData.box = new THREE.Box3().setFromObject(gem);
+                        if (gem.position.z < playerWorldPos.z - 30) { scene.remove(gem); gems.splice(i, 1); continue; }
+                        if (gem.userData.box && playerBox.intersectsBox(gem.userData.box)) {
+                            gemScore++; score += GEM_SCORE_VALUE; // Add to both scores
+                            updateScoreDisplay();
+                            animateGemScoreUpdate(); // <<< Animate HUD
+                            playSound(gemCollectSound);
+                            createBurstEffect(gem.position, 0x00FF7F, 15, 0.1); // <<< Spawn gem effect
+                            scene.remove(gem); gems.splice(i, 1);
+                        }
+                    }
+                } // End player exists check
+
+                if (collisionDetected) return; // Stop updates if game over triggered
+
+                // Non-collidable Objects Movement
+                trees.forEach((tree, i) => { tree.position.z -= effectiveSpeed * delta * 60; if(tree.position.z < playerWorldPos.z - 30) { if (scene) scene.remove(tree); trees.splice(i, 1); } });
+                forestTrees.forEach((tree, i) => { tree.position.z -= effectiveSpeed * delta * 30; if(tree.position.z < playerWorldPos.z - 50) { if (scene) scene.remove(tree); forestTrees.splice(i, 1); } });
+                if(mountainGroup) { mountainGroup.children.forEach(mountain => { mountain.position.z -= effectiveSpeed * delta * 15; if (mountain.position.z < playerWorldPos.z - 150) { mountain.position.z += 500 + Math.random() * 150; mountain.position.x = (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 20); } }); }
+
+                // Player Movement & Lean
+                if(player) {
+                    const moveSpeed = playerMoveSpeedFactor * delta;
+                    let targetX = player.position.x;
+                    if(moveLeft) { targetX -= moveSpeed; playerTargetLean = PLAYER_LEAN_ANGLE; }
+                    else if(moveRight) { targetX += moveSpeed; playerTargetLean = -PLAYER_LEAN_ANGLE; }
+                    else { playerTargetLean = 0; } // Lean back to center if no horizontal input
+
+                    player.position.x = THREE.MathUtils.clamp(targetX, -4.5, 4.5);
+
+                    // <<< Smoothly Lerp Lean Rotation >>>
+                    // Rotate around the Z-axis for leaning
+                    player.rotation.z = THREE.MathUtils.lerp(player.rotation.z, playerTargetLean, 0.15); // Adjust 0.1 for speed of lean
+                }
+
+                // Power-up Timers & Effects
+                if (isPowerUpActive && now > powerUpEndTime) { deactivatePowerUp(); }
+                if (isPowerUpActive && fireEffectParticles && fireEffectParticles.visible) {
+                    const positions = fireEffectParticles.geometry.attributes.position.array;
+                    const velocities = fireEffectParticles.geometry.attributes.velocity.array;
+                    const particleCount = positions.length / 3;
+                    for (let i = 0; i < particleCount; i++) { const i3 = i * 3; positions[i3] += velocities[i3]; positions[i3 + 1] += velocities[i3 + 1]; positions[i3 + 2] += velocities[i3 + 2]; if (positions[i3 + 1] > 2.0 + Math.random()*0.5 ) { positions[i3] = (Math.random() - 0.5) * 1.5; positions[i3 + 1] = Math.random() * 0.5; positions[i3 + 2] = (Math.random() - 0.5) * 1.5; velocities[i3] = (Math.random() - 0.5) * 0.01; velocities[i3+1] = Math.random() * 0.03 + 0.02; velocities[i3+2] = (Math.random() - 0.5) * 0.01; } }
+                    fireEffectParticles.geometry.attributes.position.needsUpdate = true;
+                }
+                // Screen Shake
+                if (shakeTimeRemaining > 0) { shakeTimeRemaining -= delta; const currentIntensity = shakeIntensity * (shakeTimeRemaining / shakeDuration); camera.position.x = baseCameraPos.x + (Math.random() - 0.5) * currentIntensity; camera.position.y = baseCameraPos.y + (Math.random() - 0.5) * currentIntensity; if (shakeTimeRemaining <= 0) { camera.position.copy(baseCameraPos); } }
+
+            } // End !isGameOver block
+
+            // <<< Update Temporary Effects (like bursts) >>>
+            updateEffects(delta);
+
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+
+        // --- End Game ---
+        function endGame() {
+            if (isGameOver || !gameStarted) return;
+            isGameOver = true;
+            console.log("Game Over!");
+
+            if (backgroundMusic && backgroundMusic.isPlaying) backgroundMusic.pause();
+
+            // <<< Trigger Death Animation >>>
+            if (mixer && runAction && runAction.isRunning()) {
+                runAction.fadeOut(0.2); // Smoothly fade out run
+            }
+            if (mixer && deathAction) {
+                 // Ensure it's reset if played before, then play
+                 deathAction.reset().play();
+                 // No fade needed usually for death, just cut to it
+            } else {
+                 // If no death animation, just stop the mixer update after a short delay
+                 setTimeout(() => {
+                     if (animationFrameId) { // Make sure loop hasn't already stopped
+                         cancelAnimationFrame(animationFrameId);
+                         animationFrameId = null;
+                     }
+                 }, 300); // Allow a moment before freezing
+            }
+
+            if (isPowerUpActive) deactivatePowerUp();
+            // Deactivate shield *without* sound/effect as it's game over, not a block
+            if (isShieldActive) deactivateShield(false);
+
+            finalScoreDisplay.textContent = `Score: ${score}`; // Display final score
+            gameOverScreen.classList.remove('hidden');
+            gameOverScreen.classList.add('visible');
+
+            // Don't cancel animationFrame immediately if death anim exists
+             if (!deathAction) {
+                 cancelAnimationFrame(animationFrameId);
+                 animationFrameId = null;
+             }
+        }
+
+        // --- Restart Game ---
+        function restartGame() {
+            // if (!isGameOver) return; // Allow restart even if death anim is playing
+            console.log("Restarting game...");
+            if (collisionSound && collisionSound.isPlaying) collisionSound.stop();
+            gameOverScreen.classList.remove('visible');
+            gameOverScreen.classList.add('hidden');
+
+             // Ensure animation loop is stopped if it was still running for death anim
+             if (animationFrameId) {
+                 cancelAnimationFrame(animationFrameId);
+                 animationFrameId = null;
+             }
+
+            if (scene) {
+                // Remove dynamic objects
+                obstacles.forEach(obj => scene.remove(obj)); trees.forEach(obj => scene.remove(obj)); forestTrees.forEach(obj => scene.remove(obj)); powerUps.forEach(obj => scene.remove(obj)); roadblocks.forEach(obj => scene.remove(obj)); shieldPowerUps.forEach(obj => scene.remove(obj)); gems.forEach(obj => scene.remove(obj));
+                // Remove temporary effects
+                activeEffects.forEach(effect => {
+                    scene.remove(effect);
+                    if (effect.geometry) effect.geometry.dispose();
+                    if (effect.material) effect.material.dispose();
+                });
+                activeEffects = []; // Clear the array
+                // Remove semi-permanent scene elements that are recreated
+                if(mountainGroup) { scene.remove(mountainGroup); /* Dispose geometry/material if needed */ mountainGroup = null; }
+                if (roadLineGroup) { scene.remove(roadLineGroup); /* Dispose geometry/material */ roadLineGroup = null; }
+                // Detach player effects
+                if (player && fireEffectParticles && fireEffectParticles.parent === player) { player.remove(fireEffectParticles); }
+                if (player && shieldVisual && shieldVisual.parent === player) { shieldVisual.visible = false; }
+            }
+
+            // Reset Arrays
+            obstacles = []; trees = []; forestTrees = []; powerUps = []; roadblocks = []; shieldPowerUps = []; gems = [];
+
+            // Reset Power-ups States
+            if (isPowerUpActive) deactivatePowerUp(); isPowerUpActive = false; speedBoostFactor = 1.0; powerUpEndTime = 0;
+            if (isShieldActive) deactivateShield(false); isShieldActive = false;
+
+            // Reset Weather
+            currentWeatherState = 'CLEAR'; nextWeatherState = 'CLEAR'; weatherTransitionProgress = 1.0; lastWeatherChangeTime = performance.now(); currentRainOpacity = 0.0; currentLightningChance = weatherParameters.CLEAR.lightningChance;
+            if (scene && ambientLight && directionalLight) { /* Reset scene appearance */ scene.background.copy(weatherParameters.CLEAR.skyColor); scene.fog.color.copy(weatherParameters.CLEAR.fogColor); scene.fog.near = weatherParameters.CLEAR.fogNear; scene.fog.far = weatherParameters.CLEAR.fogFar; ambientLight.intensity = weatherParameters.CLEAR.ambientIntensity; directionalLight.intensity = weatherParameters.CLEAR.directionalIntensity; }
+            if (rainParticles) { rainParticles.material.opacity = 0.0; rainParticles.visible = false; } // Ensure rain stops visually
+
+            // Reset Player State
+            if (player) {
+                player.position.set(0, 0, 5); player.rotation.set(0, Math.PI, 0); // Reset position and lean
+                if (mixer) {
+                    mixer.stopAllAction(); // Stop all actions (including potential Death)
+                    if (runAction) {
+                        runAction.reset().play(); // Reset and play run animation
+                    }
+                }
+            } else { console.error("Player object not found during restart."); }
+
+            // Reset Scores & Game State
+            score = 0; gemScore = 0; updateScoreDisplay();
+            gameSpeed = 1.0; isGameOver = false; moveLeft = false; moveRight = false; playerTargetLean = 0;
+
+            // Reset Timers
+            lastCarTime = performance.now(); lastTreeTime = performance.now(); lastForestTime = performance.now(); lastPowerUpTime = performance.now();
+            lastRoadblockTime = performance.now() + roadblockSpawnInterval / 2;
+            lastShieldPowerUpTime = performance.now() + shieldPowerUpSpawnInterval / 3;
+            lastGemTime = performance.now();
+
+            // Recreate scene elements
+            createMountains();
+            createRoadLines();
+
+            // Restart Music
+            if (backgroundMusic && !backgroundMusic.isPlaying && backgroundMusic.buffer) { const context = backgroundMusic.context; if (context.state === 'running') { backgroundMusic.stop(); backgroundMusic.play(); } else { context.resume().then(() => { backgroundMusic.stop(); backgroundMusic.play(); }).catch(err => console.error("Error resuming context on restart:", err)); } }
+
+            // Restart Animation Loop
+            animate();
+        }
+
+        console.log("Page loaded. Waiting for intro click/tap to start game...");
+
+    </script>
 </body>
 </html>
